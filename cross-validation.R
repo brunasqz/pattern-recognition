@@ -45,13 +45,13 @@ cross_validation <- function(xc1, y, kfolds, c, paramh) {
       )
       
     }
-    svmtrain <- ksvm(xc1train, ytrain, type='C-bsvc', kernel='rbfdot', kpar=(list(paramh)), C= c)
+    svmtrain <- ksvm(as.matrix(xc1train), ytrain, type='C-bsvc', kernel='rbfdot', kpar=(list(paramh)), C= c)
     
     yhat <- predict(svmtrain,xc1test,type="response")
     
     
-    ROC <- multiclass.roc(ytest, yhat)
-    AUC <- auc(ROC)
+    ROC <- multiclass.roc(response = factor(ytest),  predictor = c(yhat), levels = c("rare", "common"))
+    auc1[i] <- auc(ROC)
     
     #plot
     # a <- alpha(svmtrain)
