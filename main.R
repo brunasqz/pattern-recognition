@@ -3,6 +3,7 @@ rm(list = ls())
 library(DMwR)
 library(kernlab)
 library(pROC)
+library(rfUtilities)
 
 #=======================================#
 #   Inicialização dados e funções       #
@@ -62,8 +63,14 @@ yhat <- predict(svmtrain,
 ROC <- multiclass.roc(c(xctest[,9],xrtest[,9]), yhat)
 AUC <- auc(ROC)
 
-rs <- ROC[['rocs']]
-plot.roc(rs[[1]])
+rs_balanceada <- ROC[['rocs']]
+plot.roc(rs_balanceada[[1]])
+
+
+
+# Calculo de acuracia e outras estatisticas
+result_balanceado <- accuracy(yhat, c(xctest[,9],xrtest[,9]))
+
 
 #=======================================#
 #    Classificação desbalanceando       #
@@ -98,5 +105,28 @@ yhat <- predict(svmtrain,
 ROC <- multiclass.roc(c(xctest[,9],xrtest[,9]), yhat)
 AUC <- auc(ROC)
 
-rs <- ROC[['rocs']]
-plot.roc(rs[[1]])
+rs_desbalanceada <- ROC[['rocs']]
+plot.roc(rs_desbalanceada[[1]])
+
+
+
+# Calculo de acuracia e outras estatisticas
+result_desbalanceado <- accuracy(yhat, c(xctest[,9],xrtest[,9]))
+
+
+#=====================================================#
+#    COmparação entre balanceado e desbalanceado      #
+#=====================================================#
+
+
+#Plot de curvas ROC
+plot.roc(rs_desbalanceada[[1]], col = 'black', main="Comparação entre métodos", lty=2)
+par(new=T)
+plot.roc(rs_balanceada[[1]], col = 'blue')
+legend("topright", inset = .02, legend=c("SMOOT e SVM", "SVM"),
+       col=c("blue", "black"), lty=1:2, cex=0.8,
+       title="Métodos", text.font=4)
+
+
+
+
