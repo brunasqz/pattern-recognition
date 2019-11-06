@@ -123,7 +123,7 @@ result_desbalanceado <- accuracy(yhat, c(xctest[,9],xrtest[,9]))
 plot.roc(rs_desbalanceada[[1]], col = 'black', main="Comparação entre métodos", lty=2)
 par(new=T)
 plot.roc(rs_balanceada[[1]], col = 'blue')
-legend("topright", inset = .02, legend=c("SMOOT e SVM", "SVM"),
+legend("bottomright", inset = .02, legend=c("SMOOT e SVM", "SVM"),
        col=c("blue", "black"), lty=1:2, cex=0.8,
        title="Métodos", text.font=4)
 
