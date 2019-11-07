@@ -17,6 +17,8 @@ colnames(amostra_classes) <- c("Desbalanceada", "Balanceada")
 amostra_classes[1,1] <- length(which(data$X0 == "common")) 
 amostra_classes[2,1] <- length(which(data$X0 == "rare"))
 
+auc_desbalanceado <- NULL
+auc_balanceado <- NULL
 
 #=======================================#
 #    Classificação desbalanceando       #
@@ -25,10 +27,8 @@ result_raw<- cross_validation(as.matrix(data[,1:8]), as.matrix(data[,9]),
                                  kfolds = 10, c = 0.5, paramh = 2)
 
 
-# resultados da AUC de cada fold
-for(i in 1:10){
-  print( paste("Fold:", i, ": AUC =", format(round(result_raw[['auc-vector']][i], 4), nsmall = 4),"" ))
-}
+auc_desbalanceado <- cbind(seq(1, 10, 1), result_raw[['auc-vector']])
+colnames(auc_desbalanceado) <- c("Fold","AUC")
 
 
 #=======================================#
@@ -42,10 +42,9 @@ amostra_classes[2,2] <- length(which(data_smoted$X0 == "rare"))
 result_smote <- cross_validation(as.matrix(data_smoted[,1:8]), as.matrix(data_smoted[,9]),
                           kfolds = 10, c = 0.5, paramh = 2)
 
-# resultados da AUC de cada fold
-for(i in 1:10){
-  print( paste("Fold:", i, ": AUC =", format(round(result_smote[['auc-vector']][i], 4), nsmall = 4),"" ))
-}
+
+auc_balanceado <- cbind(seq(1, 10, 1), result_smote[['auc-vector']])
+colnames(auc_balanceado) <- c("Fold","AUC")
 
 
 #=======================================#
@@ -55,8 +54,12 @@ for(i in 1:10){
 # Quantidade de amostras em cada um dos experimentos
 print(amostra_classes)
 
+# AUC de cada fold
+print(auc_desbalanceado)
+print(auc_balanceado)
 
-# Escolhe o melhor fold para plotar resultados:
+
+# Escolhe o melhor fold de cada classificacao para plotar resultados:
 f_raw <- which(result_raw[['auc-vector']] == max(result_raw[['auc-vector']]))
 f_smote <- which(result_smote[['auc-vector']] == max(result_smote[['auc-vector']]))
 
